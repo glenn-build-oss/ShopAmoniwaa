@@ -773,12 +773,29 @@ function setupRealtimeSubscription() {
     if (realtimeSubscription) {
         realtimeSubscription.unsubscribe();
     }
-    
+
     realtimeSubscription = window.supabaseClient
-        .channel('products-changes')
+        .channel('admin-realtime')
         .on('postgres_changes', { event: '*', schema: 'public', table: 'products' }, (payload) => {
-            console.log('Real-time update:', payload);
+            console.log('Product real-time update:', payload);
             loadAdminProducts();
+        })
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'orders' }, (payload) => {
+            console.log('New order received:', payload);
+            // Auto-refresh orders if the orders tab is visible
+            const ordersSection = document.getElementById('orders-section');
+            if (ordersSection && !ordersSection.classList.contains('hidden')) {
+                loadOrders();
+            }
+            // Always show a toast notification for new orders
+            showToast('🛎️ New order received!', 'success');
+        })
+        .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'orders' }, (payload) => {
+            console.log('Order updated:', payload);
+            const ordersSection = document.getElementById('orders-section');
+            if (ordersSection && !ordersSection.classList.contains('hidden')) {
+                loadOrders();
+            }
         })
         .subscribe();
 }
