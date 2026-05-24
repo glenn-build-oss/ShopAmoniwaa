@@ -8,10 +8,10 @@ async function renderHome() {
             <div class="absolute inset-0 gradient-bg opacity-20"></div>
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-20 relative">
                 <div class="text-center animate-slide-up">
-                    <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold font-heading mb-4 sm:mb-6">
+                    <h1 class="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold font-heading mb-4 sm:mb-6">
                         <span class="gradient-text">ShopAmoniwaa</span>
                     </h1>
-                    <p class="text-base sm:text-lg md:text-xl lg:text-2xl text-textLight mb-6 sm:mb-8 max-w-2xl mx-auto px-4">
+                    <p class="text-sm sm:text-lg md:text-xl lg:text-2xl text-textLight mb-6 sm:mb-8 max-w-2xl mx-auto px-4">
                         Your favorite fashion shop. Beautiful products, amazing prices.
                     </p>
                     <button onclick="navigateTo('shop')" class="btn-primary text-white px-6 py-3 sm:px-8 sm:py-4 rounded-xl font-bold text-base sm:text-lg">
@@ -22,32 +22,32 @@ async function renderHome() {
         </section>
         
         <!-- Featured Categories -->
-        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-            <h2 class="text-3xl font-bold font-heading mb-8">Featured Categories</h2>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-16">
+            <h2 class="text-2xl sm:text-3xl font-bold font-heading mb-5 sm:mb-8">Featured Categories</h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
                 <div onclick="navigateTo('shop', { category: 'Electronics' })" 
-                     class="bg-surface rounded-xl p-6 cursor-pointer hover:bg-pink-50 transition-all hover:scale-105 shadow-sm">
+                     class="bg-surface rounded-xl p-4 sm:p-6 cursor-pointer hover:bg-pink-50 transition-all hover:scale-105 shadow-sm">
                     <h3 class="font-bold text-lg text-text">Electronics</h3>
                 </div>
                 <div onclick="navigateTo('shop', { category: 'Fashion' })" 
-                     class="bg-surface rounded-xl p-6 cursor-pointer hover:bg-pink-50 transition-all hover:scale-105 shadow-sm">
+                     class="bg-surface rounded-xl p-4 sm:p-6 cursor-pointer hover:bg-pink-50 transition-all hover:scale-105 shadow-sm">
                     <h3 class="font-bold text-lg text-text">Fashion</h3>
                 </div>
                 <div onclick="navigateTo('shop', { category: 'Home' })" 
-                     class="bg-surface rounded-xl p-6 cursor-pointer hover:bg-pink-50 transition-all hover:scale-105 shadow-sm">
+                     class="bg-surface rounded-xl p-4 sm:p-6 cursor-pointer hover:bg-pink-50 transition-all hover:scale-105 shadow-sm">
                     <h3 class="font-bold text-lg text-text">Home</h3>
                 </div>
                 <div onclick="navigateTo('shop', { category: 'Sports' })" 
-                     class="bg-surface rounded-xl p-6 cursor-pointer hover:bg-pink-50 transition-all hover:scale-105 shadow-sm">
+                     class="bg-surface rounded-xl p-4 sm:p-6 cursor-pointer hover:bg-pink-50 transition-all hover:scale-105 shadow-sm">
                     <h3 class="font-bold text-lg text-text">Sports</h3>
                 </div>
             </div>
         </section>
         
         <!-- New Arrivals -->
-        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-            <h2 class="text-3xl font-bold font-heading mb-8">New Arrivals</h2>
-            <div id="new-arrivals-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-16">
+            <h2 class="text-2xl sm:text-3xl font-bold font-heading mb-5 sm:mb-8">New Arrivals</h2>
+            <div id="new-arrivals-grid" class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
                 <div class="col-span-full flex items-center justify-center py-12">
                     <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
                 </div>
@@ -55,9 +55,9 @@ async function renderHome() {
         </section>
         
         <!-- Hot Deals -->
-        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-            <h2 class="text-3xl font-bold font-heading mb-8">� Hot Deals</h2>
-            <div id="hot-deals-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-16">
+            <h2 class="text-2xl sm:text-3xl font-bold font-heading mb-5 sm:mb-8">🔥 Hot Deals</h2>
+            <div id="hot-deals-grid" class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
                 <div class="col-span-full flex items-center justify-center py-12">
                     <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
                 </div>
