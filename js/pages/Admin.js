@@ -64,35 +64,26 @@ async function handleAdminLogin(event) {
     const password = document.getElementById('admin-password').value;
     
     try {
-        // Try to authenticate with Supabase
+        // Authenticate with Supabase Auth
         const { data, error } = await window.supabaseClient.auth.signInWithPassword({
             email: email,
             password: password
         });
-        
-        if (error) {
-            // If Supabase auth fails, check if it's the default admin
-            if (email === 'admin@shopamoniwaa.com' && password === 'admin1234') {
-                isAdminLoggedIn = true;
-                showToast('Login successful');
-                renderAdminDashboard();
-                return;
-            }
-            throw error;
-        }
-        
+
+        if (error) throw error;
+
         // Check if user is admin
         const { data: userData, error: userError } = await window.supabaseClient
             .from('admin_users')
             .select('*')
             .eq('email', email)
             .single();
-        
+
         if (userError || !userData) {
             await window.supabaseClient.auth.signOut();
             throw new Error('Not authorized as admin');
         }
-        
+
         isAdminLoggedIn = true;
         showToast('Login successful');
         renderAdminDashboard();
