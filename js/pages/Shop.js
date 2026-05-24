@@ -13,7 +13,7 @@ async function renderShop(params = {}) {
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <!-- Page Header -->
             <div class="mb-8">
-                <h1 class="text-4xl font-bold font-heading mb-2">Shop</h1>
+                <h1 class="text-3xl sm:text-4xl font-bold font-heading mb-2">Shop</h1>
                 <p class="text-textLight">Discover our beautiful collection</p>
             </div>
             
@@ -59,7 +59,7 @@ async function renderShop(params = {}) {
             </div>
             
             <!-- Products Grid -->
-            <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div id="products-grid" class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
                 <div class="col-span-full flex items-center justify-center py-12">
                     <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
                 </div>
