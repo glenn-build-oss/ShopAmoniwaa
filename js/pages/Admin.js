@@ -59,29 +59,21 @@ function renderAdminLogin() {
 
 async function handleAdminLogin(event) {
     event.preventDefault();
-    
+
     const email = document.getElementById('admin-email').value;
     const password = document.getElementById('admin-password').value;
-    
+
     try {
-        // Authenticate with Supabase Auth
-        const { data, error } = await window.supabaseClient.auth.signInWithPassword({
-            email: email,
-            password: password
+        // Use secure RPC function — password is verified server-side via bcrypt
+        const { data: isValid, error } = await window.supabaseClient.rpc('verify_admin_login', {
+            p_email: email,
+            p_password: password
         });
 
         if (error) throw error;
 
-        // Check if user is admin
-        const { data: userData, error: userError } = await window.supabaseClient
-            .from('admin_users')
-            .select('*')
-            .eq('email', email)
-            .single();
-
-        if (userError || !userData) {
-            await window.supabaseClient.auth.signOut();
-            throw new Error('Not authorized as admin');
+        if (!isValid) {
+            throw new Error('Invalid credentials');
         }
 
         isAdminLoggedIn = true;
