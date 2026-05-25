@@ -414,10 +414,26 @@ async function loadAdminPreorders() {
             .eq('is_preorder', true)
             .order('created_at', { ascending: false });
 
-        if (error) throw error;
-
         const grid = document.getElementById('preorders-admin-grid');
         if (!grid) return;
+
+        if (error) {
+            // Column doesn't exist yet — prompt admin to run SQL
+            if (error.code === '42703' || error.message?.includes('is_preorder')) {
+                grid.innerHTML = `
+                    <div class="col-span-full text-center py-16">
+                        <div class="text-5xl mb-4">⚙️</div>
+                        <p class="font-semibold text-violet-600 mb-2">Database setup needed</p>
+                        <p class="text-textLight text-sm mb-4">Run this SQL in Supabase to enable pre-orders:</p>
+                        <div class="bg-gray-900 text-green-400 rounded-xl p-4 text-left text-xs font-mono max-w-md mx-auto">
+                            ALTER TABLE products ADD COLUMN IF NOT EXISTS is_preorder BOOLEAN DEFAULT false;<br>
+                            ALTER TABLE products ADD COLUMN IF NOT EXISTS preorder_date DATE;
+                        </div>
+                    </div>`;
+                return;
+            }
+            throw error;
+        }
 
         if (!products || products.length === 0) {
             grid.innerHTML = `
