@@ -102,12 +102,15 @@ async function renderAdminDashboard() {
             </div>
             
             <!-- Tabs -->
-            <div class="flex space-x-4 mb-8 border-b border-pink-100">
-                <button onclick="switchTab('products')" id="tab-products" class="tab-btn px-6 py-3 font-medium border-b-2 border-primary text-primary">
+            <div class="flex space-x-1 mb-8 border-b border-pink-100 overflow-x-auto">
+                <button onclick="switchTab('products')" id="tab-products" class="tab-btn px-4 sm:px-6 py-3 font-medium border-b-2 border-primary text-primary whitespace-nowrap">
                     Products
                 </button>
-                <button onclick="switchTab('orders')" id="tab-orders" class="tab-btn px-6 py-3 font-medium border-b-2 border-transparent text-textLight hover:text-primary">
+                <button onclick="switchTab('orders')" id="tab-orders" class="tab-btn px-4 sm:px-6 py-3 font-medium border-b-2 border-transparent text-textLight hover:text-primary whitespace-nowrap">
                     Orders
+                </button>
+                <button onclick="switchTab('preorders')" id="tab-preorders" class="tab-btn px-4 sm:px-6 py-3 font-medium border-b-2 border-transparent text-textLight hover:text-violet-600 whitespace-nowrap">
+                    ✨ Pre-Orders
                 </button>
             </div>
             
@@ -170,6 +173,18 @@ async function renderAdminDashboard() {
                                 </tr>
                             </tbody>
                         </table>
+                    </div>
+                </div>
+            </div>
+            <!-- Pre-Orders Section -->
+            <div id="preorders-section" class="hidden">
+                <div class="bg-gradient-to-br from-violet-50 to-purple-50 border border-violet-200 rounded-xl p-6 mb-6">
+                    <h3 class="font-bold font-heading text-violet-700 text-lg mb-1">✨ Pre-Order Products</h3>
+                    <p class="text-sm text-violet-500">These products are marked as Pre-Order on the storefront.</p>
+                </div>
+                <div id="preorders-admin-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div class="col-span-full flex items-center justify-center py-12">
+                        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-violet-500"></div>
                     </div>
                 </div>
             </div>
@@ -296,10 +311,27 @@ async function renderAdminDashboard() {
                     </div>
                     
                     <div class="flex items-center space-x-2">
-                        <input type="checkbox" 
+                        <input type="checkbox"
                                id="product-in-stock"
                                class="w-5 h-5 rounded border-pink-200 bg-background text-primary focus:ring-primary">
                         <label for="product-in-stock" class="text-sm">In Stock</label>
+                    </div>
+
+                    <!-- Pre-Order Toggle -->
+                    <div class="border border-violet-200 rounded-xl p-4 bg-violet-50 space-y-3">
+                        <div class="flex items-center space-x-2">
+                            <input type="checkbox"
+                                   id="product-is-preorder"
+                                   onchange="togglePreorderDate(this.checked)"
+                                   class="w-5 h-5 rounded border-violet-300 bg-background text-violet-600 focus:ring-violet-500">
+                            <label for="product-is-preorder" class="text-sm font-semibold text-violet-700">✨ Mark as Pre-Order</label>
+                        </div>
+                        <div id="preorder-date-wrapper" class="hidden">
+                            <label class="block text-xs font-medium text-violet-600 mb-1">Expected Release Date (optional)</label>
+                            <input type="date"
+                                   id="product-preorder-date"
+                                   class="w-full bg-white border border-violet-200 rounded-lg px-4 py-2 text-text focus:border-violet-500 focus:outline-none text-sm">
+                        </div>
                     </div>
                     
                     <div class="flex space-x-4 pt-4">
@@ -339,28 +371,108 @@ let cropper = null;
 let croppedImageData = null;
 
 function switchTab(tab) {
-    const productsSection = document.getElementById('products-section');
-    const ordersSection = document.getElementById('orders-section');
-    const productsTab = document.getElementById('tab-products');
-    const ordersTab = document.getElementById('tab-orders');
-    
-    if (tab === 'products') {
-        productsSection.classList.remove('hidden');
-        ordersSection.classList.add('hidden');
-        productsTab.classList.add('border-primary', 'text-primary');
-        productsTab.classList.remove('border-transparent', 'text-textLight');
-        ordersTab.classList.remove('border-primary', 'text-primary');
-        ordersTab.classList.add('border-transparent', 'text-textLight');
-    } else {
-        productsSection.classList.add('hidden');
-        ordersSection.classList.remove('hidden');
-        ordersTab.classList.add('border-primary', 'text-primary');
-        ordersTab.classList.remove('border-transparent', 'text-textLight');
-        productsTab.classList.remove('border-primary', 'text-primary');
-        productsTab.classList.add('border-transparent', 'text-textLight');
-        loadOrders();
+    const sections = ['products', 'orders', 'preorders'];
+    sections.forEach(s => {
+        const sec = document.getElementById(`${s}-section`);
+        const btn = document.getElementById(`tab-${s}`);
+        if (sec) sec.classList.add('hidden');
+        if (btn) {
+            btn.classList.remove('border-primary', 'text-primary', 'border-violet-500', 'text-violet-600');
+            btn.classList.add('border-transparent', 'text-textLight');
+        }
+    });
+
+    const activeSection = document.getElementById(`${tab}-section`);
+    const activeBtn = document.getElementById(`tab-${tab}`);
+    if (activeSection) activeSection.classList.remove('hidden');
+    if (activeBtn) {
+        activeBtn.classList.remove('border-transparent', 'text-textLight');
+        if (tab === 'preorders') {
+            activeBtn.classList.add('border-violet-500', 'text-violet-600');
+        } else {
+            activeBtn.classList.add('border-primary', 'text-primary');
+        }
+    }
+
+    if (tab === 'orders') loadOrders();
+    if (tab === 'preorders') loadAdminPreorders();
+}
+
+function togglePreorderDate(checked) {
+    const wrapper = document.getElementById('preorder-date-wrapper');
+    if (wrapper) {
+        if (checked) wrapper.classList.remove('hidden');
+        else wrapper.classList.add('hidden');
     }
 }
+
+async function loadAdminPreorders() {
+    try {
+        const { data: products, error } = await window.supabaseClient
+            .from('products')
+            .select('*')
+            .eq('is_preorder', true)
+            .order('created_at', { ascending: false });
+
+        if (error) throw error;
+
+        const grid = document.getElementById('preorders-admin-grid');
+        if (!grid) return;
+
+        if (!products || products.length === 0) {
+            grid.innerHTML = `
+                <div class="col-span-full text-center py-16">
+                    <div class="text-5xl mb-4">✨</div>
+                    <p class="text-violet-400 font-medium">No pre-order products yet.</p>
+                    <p class="text-textLight text-sm mt-1">Go to Products tab and mark a product as Pre-Order.</p>
+                </div>`;
+            return;
+        }
+
+        grid.innerHTML = products.map(p => `
+            <div class="bg-surface rounded-xl overflow-hidden shadow-sm border border-violet-100 hover:border-violet-300 transition-all">
+                <div class="relative">
+                    <img src="${p.image_url || 'https://via.placeholder.com/400x200/F3E8FF/7C3AED?text=Pre-Order'}"
+                         alt="${p.name}" class="w-full h-36 object-cover">
+                    <span class="absolute top-2 left-2 bg-gradient-to-r from-violet-600 to-purple-500 text-white text-xs px-2 py-1 rounded-full font-bold">✨ Pre-Order</span>
+                </div>
+                <div class="p-4">
+                    <h4 class="font-bold font-heading text-sm mb-1 line-clamp-1">${p.name}</h4>
+                    <p class="text-violet-600 font-bold text-sm">GH₵${p.price.toFixed(2)}</p>
+                    ${p.preorder_date ? `<p class="text-xs text-violet-400 mt-1">🗓 Ships ~${new Date(p.preorder_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</p>` : '<p class="text-xs text-violet-400 mt-1">🗓 No release date set</p>'}
+                    <div class="flex gap-2 mt-3">
+                        <button onclick="openEditProductModal('${p.id}')"
+                                class="flex-1 bg-violet-100 hover:bg-violet-200 text-violet-700 text-xs font-medium py-2 rounded-lg transition-colors">
+                            Edit
+                        </button>
+                        <button onclick="removePreorder('${p.id}')"
+                                class="flex-1 bg-red-50 hover:bg-red-100 text-red-500 text-xs font-medium py-2 rounded-lg transition-colors">
+                            Remove
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    } catch (error) {
+        console.error('Error loading admin pre-orders:', error);
+    }
+}
+
+async function removePreorder(productId) {
+    try {
+        const { error } = await window.supabaseClient
+            .from('products')
+            .update({ is_preorder: false, preorder_date: null })
+            .eq('id', productId);
+        if (error) throw error;
+        showToast('Pre-order status removed');
+        loadAdminPreorders();
+    } catch (error) {
+        showToast('Failed to update product', 'error');
+    }
+}
+
+
 
 function handleImageUpload(event) {
     const file = event.target.files[0];
@@ -524,8 +636,11 @@ function openAddProductModal() {
     document.getElementById('product-stock').value = '';
     document.getElementById('product-category').value = '';
     document.getElementById('product-in-stock').checked = true;
+    document.getElementById('product-is-preorder').checked = false;
+    document.getElementById('product-preorder-date').value = '';
+    document.getElementById('preorder-date-wrapper').classList.add('hidden');
     document.getElementById('product-modal').classList.remove('hidden');
-    
+
     // Reset image state
     croppedImageData = null;
     document.getElementById('cropped-preview-container').classList.add('hidden');
@@ -533,7 +648,7 @@ function openAddProductModal() {
     document.getElementById('product-image-file').value = '';
     const instantPreview = document.getElementById('instant-upload-preview');
     if (instantPreview) instantPreview.classList.add('hidden');
-    
+
     // Hide edit-mode existing image banner
     const existingBanner = document.getElementById('existing-image-banner');
     if (existingBanner) existingBanner.classList.add('hidden');
@@ -551,6 +666,12 @@ function openEditProductModal(productId) {
     document.getElementById('product-stock').value = product.stock_quantity;
     document.getElementById('product-category').value = product.category;
     document.getElementById('product-in-stock').checked = product.in_stock;
+    // Pre-order fields
+    const isPreorder = !!product.is_preorder;
+    document.getElementById('product-is-preorder').checked = isPreorder;
+    document.getElementById('product-preorder-date').value = product.preorder_date || '';
+    const dateWrapper = document.getElementById('preorder-date-wrapper');
+    if (dateWrapper) { isPreorder ? dateWrapper.classList.remove('hidden') : dateWrapper.classList.add('hidden'); }
     document.getElementById('product-modal').classList.remove('hidden');
     
     // Reset upload preview
@@ -602,6 +723,7 @@ async function handleProductSubmit(event) {
     event.preventDefault();
     
     const productId = document.getElementById('product-id').value;
+    const isPreorder = document.getElementById('product-is-preorder').checked;
     const productData = {
         name: document.getElementById('product-name').value,
         description: document.getElementById('product-description').value,
@@ -609,7 +731,9 @@ async function handleProductSubmit(event) {
         stock_quantity: parseInt(document.getElementById('product-stock').value),
         category: document.getElementById('product-category').value,
         image_url: croppedImageData || null,
-        in_stock: document.getElementById('product-in-stock').checked
+        in_stock: document.getElementById('product-in-stock').checked,
+        is_preorder: isPreorder,
+        preorder_date: isPreorder ? (document.getElementById('product-preorder-date').value || null) : null
     };
     
     try {
