@@ -108,9 +108,21 @@ async function loadProducts() {
         }
         
         const { data: products, error } = await query;
-        
-        if (error) throw error;
-        
+
+        if (error) {
+            // If the pre-order column doesn't exist yet, show friendly message
+            if (currentCategory === '__preorder__' && (error.code === '42703' || error.message?.includes('is_preorder'))) {
+                document.getElementById('products-grid').innerHTML = `
+                    <div class="col-span-full text-center py-16">
+                        <div class="text-5xl mb-4">✨</div>
+                        <p class="font-semibold text-violet-500 mb-1">Pre-Orders Coming Soon</p>
+                        <p class="text-textLight text-sm">Run the database setup SQL to enable pre-orders.</p>
+                    </div>`;
+                return;
+            }
+            throw error;
+        }
+
         currentProducts = products;
         renderProductsGrid(products);
     } catch (error) {
