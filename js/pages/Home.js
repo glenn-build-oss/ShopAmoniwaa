@@ -44,6 +44,23 @@ async function renderHome() {
             </div>
         </section>
         
+        <!-- Pre-Orders Section (shown only when pre-orders exist) -->
+        <div id="preorders-wrapper" class="hidden">
+            <section class="relative overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-br from-violet-50 via-purple-50 to-pink-50 opacity-80"></div>
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-14 relative">
+                    <div class="flex items-center gap-3 mb-5 sm:mb-8">
+                        <div class="bg-gradient-to-r from-violet-600 to-purple-500 rounded-xl px-4 py-2 shadow-md">
+                            <span class="text-white font-extrabold text-sm tracking-wide">✨ PRE-ORDER</span>
+                        </div>
+                        <h2 class="text-2xl sm:text-3xl font-bold font-heading text-violet-700">Coming Soon</h2>
+                    </div>
+                    <p class="text-textLight text-sm sm:text-base mb-6 -mt-4">Reserve yours before they drop. Pre-order now and be first in line!</p>
+                    <div id="preorders-grid" class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6"></div>
+                </div>
+            </section>
+        </div>
+
         <!-- New Arrivals -->
         <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-16">
             <h2 class="text-2xl sm:text-3xl font-bold font-heading mb-5 sm:mb-8">New Arrivals</h2>
@@ -101,8 +118,41 @@ async function renderHome() {
     `;
     
     // Load products
+    await loadPreOrders();
     await loadNewArrivals();
     await loadHotDeals();
+}
+
+async function loadPreOrders() {
+    try {
+        const { data: products, error } = await window.supabaseClient
+            .from('products')
+            .select('*')
+            .eq('is_preorder', true)
+            .order('created_at', { ascending: false });
+
+        if (error) throw error;
+
+        const wrapper = document.getElementById('preorders-wrapper');
+        const grid = document.getElementById('preorders-grid');
+        if (!wrapper || !grid) return;
+
+        if (!products || products.length === 0) {
+            wrapper.classList.add('hidden');
+            return;
+        }
+
+        wrapper.classList.remove('hidden');
+        grid.innerHTML = products.map(product => createProductCard(product).outerHTML).join('');
+
+        grid.querySelectorAll('.product-card').forEach((card, index) => {
+            card.onclick = () => navigateTo('product', { id: products[index].id });
+            const addButton = card.querySelector('button');
+            if (addButton) addButton.onclick = (e) => { e.stopPropagation(); addToCart(products[index].id); };
+        });
+    } catch (error) {
+        console.error('Error loading pre-orders:', error);
+    }
 }
 
 async function loadNewArrivals() {
