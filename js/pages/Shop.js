@@ -37,6 +37,7 @@ async function renderShop(params = {}) {
                                 class="w-full bg-background border border-pink-200 rounded-lg px-4 py-3 text-text focus:border-primary focus:outline-none"
                                 onchange="handleCategoryChange(this.value)">
                             <option value="">All Categories</option>
+                            <option value="__preorder__" ${currentCategory === '__preorder__' ? 'selected' : ''}>✨ Pre-Orders</option>
                             <option value="Electronics" ${currentCategory === 'Electronics' ? 'selected' : ''}>Electronics</option>
                             <option value="Fashion" ${currentCategory === 'Fashion' ? 'selected' : ''}>Fashion</option>
                             <option value="Home" ${currentCategory === 'Home' ? 'selected' : ''}>Home</option>
@@ -81,9 +82,11 @@ async function renderShop(params = {}) {
 async function loadProducts() {
     try {
         let query = window.supabaseClient.from('products').select('*');
-        
+
         // Apply category filter
-        if (currentCategory) {
+        if (currentCategory === '__preorder__') {
+            query = query.eq('is_preorder', true);
+        } else if (currentCategory) {
             query = query.eq('category', currentCategory);
         }
         
