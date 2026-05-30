@@ -24,20 +24,7 @@ A modern, dark-mode e-commerce web application built with vanilla HTML, CSS, and
 - **Smooth Animations**: Page transitions, hover effects, skeleton loaders
 - **Mobile Responsive**: Hamburger nav, bottom navigation bar, swipeable cards
 
-## 🚀 Setup Instructions
-
-### 1. Database Setup (Supabase)
-
-1. Go to [Supabase](https://supabase.com) and create a new project
-2. Navigate to the SQL Editor in your Supabase dashboard
-3. Copy and run the SQL from `supabase-schema.sql`
-4. Enable Realtime for the `products` table:
-   - Go to Database → Replication
-   - Enable Realtime for the `products` table
-5. Set up Row Level Security (RLS) policies (included in the SQL)
-
-
-
+## 
 
 ## 📁 Project Structure
 
