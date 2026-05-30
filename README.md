@@ -36,42 +36,8 @@ A modern, dark-mode e-commerce web application built with vanilla HTML, CSS, and
    - Enable Realtime for the `products` table
 5. Set up Row Level Security (RLS) policies (included in the SQL)
 
-### 2. Environment Configuration
 
-The `.env` file is already configured with your Supabase credentials:
-```
-VITE_SUPABASE_URL=https://djhwgcbilrgwwxipqjvy.supabase.co
-VITE_SUPABASE_ANON_KEY=sb_publishable_s-dtzdRRiVhR6_HQ9IZy-A_b9WXgogg
-```
 
-### 3. Admin Authentication
-
-You have two options for admin login:
-
-**Option 1: Supabase Auth (Recommended)**
-1. In Supabase, go to Authentication → Users
-2. Create a new user with email: `admin@nexshop.com`
-3. Set a password for this user
-4. The email is already added to the `admin_users` table in the schema
-
-**Option 2: Fallback Credentials**
-- Email: `admin@nexshop.com`
-- Password: `admin1234`
-
-### 4. Running the Application
-
-Since this is a vanilla HTML/CSS/JS application, you can simply:
-
-1. Open `index.html` in a web browser, OR
-2. Use a local server for better development:
-   ```bash
-   # Using Python
-   python -m http.server 8000
-   
-   # Using Node.js (if you have http-server installed)
-   npx http-server
-   ```
-3. Navigate to `http://localhost:8000`
 
 ## 📁 Project Structure
 
